@@ -69,7 +69,7 @@
                 <div class="col-8">
                 <?php $no=0; foreach($skill as $key => $value): ?>
                     <div class="custom-control custom-checkbox custom-control-inline">
-                        <input name="skill[]" id="skill_<?= $no ?>" type="checkbox" class="custom-control-input" value="<?= $key ?>"> 
+                        <input name="skill[]" id="skill_<?= $no ?>" type="checkbox" class="custom-control-input" value="<?= $key .':'. $value ?>"> 
                         <label for="skill_<?= $no ?>" class="custom-control-label"><?= $key ?></label>
                     </div>
                 <?php $no++; endforeach; ?>
@@ -90,6 +90,8 @@
                 <th>Domisili</th>
                 <th>Program Studi</th>
                 <th>Skill Programming</th>
+                <th>Skor</th>
+                <th>Predikat</th>
             </tr>
             <?php
             if(isset($_POST['submit'])){
@@ -99,12 +101,35 @@
                 $jenis_kelamin = $_POST['jenis_kelamin'];
                 $domisili = $_POST['domisili'];
                 $program_studi = $_POST['program_studi'];
-                $skill = $_POST['skill'];
                 
-                // $nilai = 0;
-                // foreach($skill as $s){
-                //     $nilai += $s;
-                // }
+                $skill = "-";
+                $nama_skill = array();
+                $nilai = 0;
+                
+                if(!empty($_POST['skill'])){
+                    $skill = $_POST['skill'];
+                    foreach($skill as $s){
+                        $pecahan = explode(":", $s);
+                        $nama_skill[] = $pecahan[0];
+                        $nilai += $pecahan[1];
+                    }
+                }else{
+                    $nama_skill = ["-"];
+                }
+
+                $predikat = "";
+                if($nilai >= 100 ){
+                    $predikat = "Sangat Baik";
+                }else if($nilai >= 60 && $nilai < 100 ){
+                    $predikat = "Baik";
+                }else if($nilai >= 40 && $nilai < 60 ){
+                    $predikat = "Cukup";
+                }else if($nilai > 0 && $nilai < 40){
+                    $predikat = "Kurang";
+                }else{
+                    $predikat = "Tidak Memadai";
+                }
+
             ?>
             <tr>
                 <td><?= $nim; ?></td>
@@ -113,7 +138,9 @@
                 <td><?= $jenis_kelamin; ?></td>
                 <td><?= $domisili; ?></td>
                 <td><?= $program_studi; ?></td>
-                <td><?php foreach($skill as $s) { echo $s . " ";  } ?></td>
+                <td><?= implode(', ',$nama_skill) ?></td>
+                <td><?= $nilai ?></td>
+                <td><?= $predikat ?></td>
             </tr>
             <?php } ?>
         </table>
